@@ -1,1 +1,18 @@
-{}
+{
+  "admin": "6287869851096@s.whatsapp.net",
+  "technician": {
+    "name": "Johan Gunawan",
+    "phone": "087869851096"
+  },
+  "responses": {
+    "greeting": "👋 Halo {name}! Terima kasih telah menghubungi *Layanan Instalasi CCTV*.\n\n📍 Kami melayani pemasangan & perawatan:\n✅ CCTV DVR 2-8 Kamera\n✅ Baby Cam, Wifi Cam\n✅ Survey Lokasi & Konsultasi Gratis\n✅ Area: Perumahan, Ruko, Kantor\n\nKetik *katalog* atau *maintenance* untuk info lainnya.\n📞 Teknisi: {techPhone}",
+    "katalog": "📦 Katalog kami sedang disiapkan. Untuk info lengkap silakan hubungi teknisi: {techPhone}.",
+    "maintenance": "🔧 Untuk permintaan perawatan CCTV, hubungi teknisi {techName} di {techPhone}.",
+    "unknown": "🤖 Maaf, saya belum mengenali pesan *\"{text}\"*. Ketik *halo* untuk mulai."
+  },
+  "keywords": {
+    "greeting": ["halo", "hai"],
+    "catalog": ["katalog"],
+    "maintenance": ["maintenance"]
+  }
+}

@@ -1,13 +1,16 @@
-// index.js
-
 import {
   makeWASocket,
   useMultiFileAuthState,
   DisconnectReason
 } from '@whiskeysockets/baileys'
+
 import P from 'pino'
 import qrcode from 'qrcode-terminal'
 import { Boom } from '@hapi/boom'
+import fs from 'fs'
+
+// Ambil konfigurasi dari config.json
+const config = JSON.parse(fs.readFileSync('./config.json', 'utf-8'))
 
 // Fungsi utama menjalankan bot
 async function startBot() {
@@ -42,7 +45,7 @@ async function startBot() {
     }
   })
 
-  sock.ev.on('messages.upsert', async ({ messages, type }) => {
+  sock.ev.on('messages.upsert', async ({ messages }) => {
     const msg = messages[0]
     if (!msg.message || msg.key.fromMe) return
 
@@ -50,28 +53,23 @@ async function startBot() {
     const from = msg.key.remoteJid
     const sender = msg.pushName || 'Pengguna'
     const reply = (txt) => sock.sendMessage(from, { text: txt }, { quoted: msg })
-
     const lower = text.toLowerCase()
 
-    // ✅ Respon Otomatis
-    if (lower.includes('halo') || lower.includes('hai')) {
-      reply(`👋 Halo ${sender}! Terima kasih telah menghubungi *Layanan Instalasi CCTV*.
+    const { greeting, catalog, maintenance } = config.keywords
+    const { responses, technician } = config
 
-📍 Kami melayani pemasangan & perawatan:
-✅ CCTV DVR 2-8 Kamera
-✅ Baby Cam, Wifi Cam
-✅ Survey Lokasi & Konsultasi Gratis
-✅ Area: Perumahan, Ruko, Kantor
-
-Ketik *katalog* atau *maintenance* untuk info lainnya.
-📞 Teknisi: 087869851096 (Johan)`)
-    } else if (lower.includes('katalog')) {
-      reply('📦 Katalog kami sedang disiapkan. Untuk info lengkap silakan hubungi teknisi: 087869851096.')
-    } else if (lower.includes('maintenance')) {
-      reply('🔧 Untuk permintaan perawatan CCTV, hubungi teknisi Johan di 087869851096.')
+    if (greeting.some(k => lower.includes(k))) {
+      reply(responses.greeting
+        .replace('{name}', sender)
+        .replace('{techPhone}', technician.phone))
+    } else if (catalog.some(k => lower.includes(k))) {
+      reply(responses.katalog.replace('{techPhone}', technician.phone))
+    } else if (maintenance.some(k => lower.includes(k))) {
+      reply(responses.maintenance
+        .replace('{techName}', technician.name)
+        .replace('{techPhone}', technician.phone))
     } else {
-      reply(`🤖 Maaf, saya belum mengenali pesan *"${text}"*.
-Ketik *halo* untuk mulai.`)
+      reply(responses.unknown.replace('{text}', text))
     }
   })
 }
